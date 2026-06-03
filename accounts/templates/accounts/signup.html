@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provision Identity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans antialiased min-h-screen flex flex-col relative overflow-hidden">
+    
+    <div class="w-full border-b border-slate-800 bg-slate-900/80 px-6 py-3 flex justify-end items-center text-[10px] tracking-widest text-slate-400 font-mono gap-2 relative z-50">
+        <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+        Uplink: <span id="location-display" class="text-emerald-400 font-bold">TRIANGULATING...</span>
+        <span class="border-l border-slate-700 pl-2 ml-1 text-amber-400 flex items-center gap-1">
+            Atmosphere: <span id="temp-display" class="font-bold">--°C</span>
+        </span>
+    </div>
+
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#4f46e510_1px,transparent_1px),linear-gradient(to_bottom,#4f46e510_1px,transparent_1px)] bg-[size:2rem_2rem] pointer-events-none mt-10"></div>
+
+    <div class="flex-1 flex items-center justify-center p-4 sm:p-8 relative z-10">
+        <div class="w-full max-w-lg bg-slate-900/90 backdrop-blur-xl border border-slate-700 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl p-8 sm:p-10 fade-in">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-wider">Identity Provisioning</h2>
+                    <p class="text-[11px] font-mono text-cyan-400 mt-1 uppercase tracking-widest">Secure Registration Protocol v2.4</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{% url 'signup' %}" class="space-y-5">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-2">Requested Alias (Username)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 font-mono">@</span>
+                        <input type="text" name="username" required autocomplete="off"
+                               class="w-full pl-9 pr-4 py-3 bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 transition-all font-mono placeholder:text-slate-700" placeholder="sys_admin_01">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-2">Clearance Level</label>
+                        <select class="w-full px-4 py-3 bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-lg text-sm text-white focus:outline-none font-mono appearance-none">
+                            <option>Level 1 (Standard)</option>
+                            <option>Level 2 (Elevated)</option>
+                            <option disabled>Level 3 (Restricted)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-2">Department</label>
+                        <select class="w-full px-4 py-3 bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-lg text-sm text-white focus:outline-none font-mono appearance-none">
+                            <option>Cybernetics</option>
+                            <option>Data Engineering</option>
+                            <option>Threat Analysis</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-2">Security Key (Password)</label>
+                    <input type="password" name="password" id="reg-password" required
+                           class="w-full px-4 py-3 bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500 transition-all font-mono tracking-[0.2em]">
+                    <div class="mt-2 flex gap-1 h-1.5" id="strength-meter">
+                        <div class="h-full flex-1 bg-slate-800 rounded-full transition-colors duration-300"></div>
+                        <div class="h-full flex-1 bg-slate-800 rounded-full transition-colors duration-300"></div>
+                        <div class="h-full flex-1 bg-slate-800 rounded-full transition-colors duration-300"></div>
+                        <div class="h-full flex-1 bg-slate-800 rounded-full transition-colors duration-300"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-mono mt-1 text-right uppercase" id="strength-text">Awaiting Input</p>
+                </div>
+
+                <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 text-white font-bold text-sm py-4 rounded-lg shadow-[0_0_20px_rgba(8,145,178,0.3)] hover:shadow-[0_0_25px_rgba(8,145,178,0.5)] transition-all uppercase tracking-widest mt-4 border border-cyan-400/50">
+                    Generate Identity Matrix
+                </button>
+
+                <div class="text-center mt-6 border-t border-slate-800 pt-6">
+                    <a href="{% url 'login' %}" class="text-[11px] font-mono text-slate-500 hover:text-cyan-400 uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
+                        <span>← Abort & Return to Login</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Weather & Location Script
+            const locDisplay = document.getElementById("location-display");
+            const tempDisplay = document.getElementById("temp-display");
+            
+            async function fetchWeather(lat, lon) {
+                try {
+                    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                    const data = await res.json();
+                    if(data.current_weather) { tempDisplay.innerText = `${data.current_weather.temperature}°C`; }
+                } catch(e) { tempDisplay.innerText = "ERR"; }
+            }
+
+            async function getIPFallback() {
+                try {
+                    const res = await fetch('https://ipapi.co/json/');
+                    const data = await res.json();
+                    locDisplay.innerText = (data.city + ", " + data.country_name).toUpperCase();
+                    fetchWeather(data.latitude, data.longitude);
+                } catch(e) { locDisplay.innerText = "LOCATION ENCRYPTED"; }
+            }
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    try {
+                        const lat = pos.coords.latitude; const lon = pos.coords.longitude;
+                        fetchWeather(lat, lon);
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                        const data = await res.json();
+                        const city = data.address.city || data.address.town || data.address.state || "UNKNOWN";
+                        locDisplay.innerText = city.toUpperCase() + " [GPS ACTIVE]";
+                        locDisplay.classList.replace("text-emerald-400", "text-cyan-400");
+                    } catch(e) { getIPFallback(); }
+                }, () => { getIPFallback(); }); 
+            } else { getIPFallback(); }
+
+            // Password Strength
+            document.getElementById('reg-password').addEventListener('input', function(e) {
+                const val = e.target.value; const bars = document.getElementById('strength-meter').children; const text = document.getElementById('strength-text');
+                let strength = 0;
+                if(val.length > 5) strength++; if(val.length > 8) strength++; if(/[A-Z]/.test(val) && /[0-9]/.test(val)) strength++; if(/[^A-Za-z0-9]/.test(val)) strength++;
+                for(let i=0; i<4; i++) bars[i].className = "h-full flex-1 bg-slate-800 rounded-full transition-colors duration-300";
+                if(strength === 0) { text.innerText = "AWAITING INPUT"; text.className = "text-[10px] text-slate-500 font-mono mt-1 text-right uppercase"; }
+                else if(strength === 1) { bars[0].classList.replace('bg-slate-800', 'bg-rose-500'); text.innerText = "WEAK"; text.classList.replace('text-slate-500', 'text-rose-500'); }
+                else if(strength === 2) { bars[0].classList.replace('bg-slate-800', 'bg-amber-500'); bars[1].classList.replace('bg-slate-800', 'bg-amber-500'); text.innerText = "MODERATE"; text.classList.replace('text-rose-500', 'text-amber-500'); }
+                else if(strength === 3) { bars[0].classList.replace('bg-slate-800', 'bg-emerald-500'); bars[1].classList.replace('bg-slate-800', 'bg-emerald-500'); bars[2].classList.replace('bg-slate-800', 'bg-emerald-500'); text.innerText = "STRONG"; text.classList.replace('text-amber-500', 'text-emerald-500'); }
+                else if(strength === 4) { for(let i=0; i<4; i++) bars[i].classList.replace('bg-slate-800', 'bg-cyan-400'); text.innerText = "UNBREAKABLE"; text.classList.replace('text-emerald-500', 'text-cyan-400'); }
+            });
+        });
+    </script>
+</body>
+</html>
